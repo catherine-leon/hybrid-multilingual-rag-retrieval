@@ -176,7 +176,7 @@ In the last case, the top-ranked chunk names the data source the question asks a
 | Stage | Research question | Plan |
 |---|---|---|
 | 3. Generation | RQ3 | An open LLM answers from the retrieved chunks and cites chunk IDs. Evaluation: official QASPER answer F1 by answer type, unanswerable detection, faithfulness on a subsample. Main comparison: the same LLM with each retriever. |
-| 4. Cross-lingual | RQ4 | The 300 questions are machine-translated into French and Russian, and a sample is manually verified. Comparison: direct multilingual retrieval vs translating the question into English first, and the drop relative to English. |
+| 4. Cross-lingual | RQ4 | The 300 questions are machine-translated into French and Russian. Comparison: direct multilingual retrieval vs translating the question back into English with a different MT system. Answers are generated in English in all conditions, so answer F1 stays comparable to the English baseline. |
 | 5. Adaptive retrieval | RQ5 | Evidence-sufficiency check → query rewriting / translation → retry. Static vs adaptive: answer quality, evidence recall, number of retries, latency. |
 
 ## Repository structure
