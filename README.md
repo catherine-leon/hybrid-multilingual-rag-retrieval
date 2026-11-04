@@ -10,9 +10,9 @@ This project studies how retrieval design choices behave in that setting:
 |---|---|---|---|
 | **RQ1** | Do conclusions about sparse, dense, hybrid and reranked retrieval drawn on a corpus-level benchmark transfer to evidence retrieval within scientific papers? | 1–2 | ✅ |
 | **RQ2** | How does the chunking strategy affect evidence coverage at a fixed context budget? | 2 | ✅ |
-| **RQ3** | Does better evidence retrieval translate into more accurate and more faithful generated answers? | 3 | planned |
-| **RQ4** | How robust is the pipeline when the questions are asked in French or Russian about English papers? | 4 | planned |
-| **RQ5** | Can adaptive retrieval (evidence check → query rewriting → retry) recover missing evidence, and at what cost? | 5 | planned |
+| **RQ3** | Does better evidence retrieval translate into more accurate and more faithful generated answers? | 3 | in progress |
+| **RQ4** | How robust is the pipeline when the questions are asked in French or Russian about English papers? | 4 | in progress |
+| **RQ5** | Can adaptive retrieval (evidence check → query rewriting → retry) recover missing evidence, and at what cost? | 5 | in progress |
 
 ## Retrieval methods
 
