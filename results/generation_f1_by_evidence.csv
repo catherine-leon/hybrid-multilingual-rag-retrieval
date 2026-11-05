@@ -1,0 +1,7 @@
+,mean,mean,count,count
+evidence_in_context,False,True,False,True
+condition,,,,
+BM25,0.288,0.458,128,172
+Dense,0.285,0.517,79,221
+Hybrid,0.24,0.512,92,208
+Hybrid+CE,0.294,0.504,72,228

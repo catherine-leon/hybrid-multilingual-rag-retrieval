@@ -1,0 +1,7 @@
+condition,abstractive,boolean,extractive,none
+closed-book,0.042,0.091,0.037,0.931
+BM25,0.197,0.632,0.372,0.846
+Dense,0.224,0.632,0.467,0.8
+Hybrid,0.218,0.564,0.449,0.714
+Hybrid+CE,0.231,0.632,0.465,0.846
+oracle,0.349,0.737,0.633,0.923

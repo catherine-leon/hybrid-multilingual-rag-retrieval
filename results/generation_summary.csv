@@ -1,0 +1,7 @@
+condition,answer_F1,evidence_F1,evidence_in_context,citation_rate,citation_precision,said_unanswerable,valid_json,context_tokens,latency_s,gap_closed
+closed-book,0.131,0.22,0.0,0.0,,0.787,0.997,0.0,0.651,0.0
+BM25,0.386,0.387,0.573,0.85,0.427,0.237,1.0,754.547,0.981,0.54
+Dense,0.456,0.493,0.737,0.907,0.52,0.18,1.0,731.637,1.049,0.689
+Hybrid,0.429,0.471,0.693,0.893,0.507,0.18,1.0,780.833,1.033,0.631
+Hybrid+CE,0.453,0.497,0.76,0.903,0.513,0.137,1.0,790.033,1.059,0.682
+oracle,0.603,0.898,1.0,0.92,1.0,0.127,1.0,371.63,1.031,1.0

@@ -1,0 +1,83 @@
+===== RETRIEVAL FAILURE (no gold evidence in context): 72 questions =====
+
+Q: What is the accuracy of this model compared to sota?  [2849c2944c47cf1de62b539c5d3c396a3e8d283a]
+GOLD: ['Unanswerable', 'The model improves the state of the art performance for the ISTEX dataset (F1 micro: 0.870, F1 macro: 0.858) and for the Microposts 2016 dataset (F1 micro:  0.087).', 'The micro and macro f1-scores of this model are 0.482 and 0.399 on the AIDA-CoNLL dataset, 0.087 and 0.515 on the Microposts 2016 dataset, 0.870 and 0.858 on the ISTEX-1000 dataset, 0.335 and 0.310 on the RSS-500 dataset', 'The accuracy ', 'Unanswerable']
+Hybrid+CE: Unanswerable
+oracle: competitive with other systems with access to larger data sources for some tasks
+
+Q: What domain of text are they working with?  [f2bcfdbebb418e7da165c19b8c7167719432ee48]
+GOLD: ['news articles', 'news', 'news articles', 'news']
+Hybrid+CE: Unanswerable
+oracle: news
+
+Q: What language is explored in this paper?  [baec99756b80eec7c0234a08bc2855e6770bcaeb]
+GOLD: ['English', 'English', 'English']
+Hybrid+CE: Tweet content
+oracle: English
+
+Q: What is the architecture of the decoder?  [38055717edf833566d912f14137b92a1d9c4f65a]
+GOLD: ['pre-trained Xnlg, 6-layer decoder', '6 transformer layers, each layer containing 1024 hidden units, 8 attention heads, and GELU activations.', 'denoising auto-encoding (DAE) objective BIBREF24']
+Hybrid+CE: sequence-to-sequence model
+oracle: 6-layer
+
+Q: What is their baseline?  [c0355afc7871bf2e12260592873ffdb5c0c4c919]
+GOLD: ['CorefNqg BIBREF33, Mp-Gsn BIBREF31, Xlm BIBREF5, Xlm Fine-tuning, Pipeline (Xlm), Pipeline (Xlm) with Google Translator', 'CorefNqg, Mp-Gsn, Xlm, Pipeline (Xlm), Pipeline (Xlm) with Google Translator', 'CorefNqg BIBREF33 , Mp-Gsn BIBREF31, Xlm BIBREF5']
+Hybrid+CE: Xlm and Pipeline (Xlm)
+oracle: CorefNqg, Mp-Gsn, Xlm
+
+Q: By how much do they outperform state-of-the-art models on knowledge graph completion?  [864295caceb1e15144c1746ab5671d085d7ff7a1]
+GOLD: [' improvements of INLINEFORM0 in MRR (which is about 25.1% relative improvement), INLINEFORM1 % absolute improvement in Hits@10', '0.105 in MRR and 6.1 percent points in Hits@10 on FB15k-237', 'On FB15k-237 dataset it outperforms 0.105 in MRR and  6.1% absolute improvement in Hits@10']
+Hybrid+CE: better performance
+oracle: 25.1% in MRR, 14.6% in Hits@10
+
+Q: Which datasets do they use?  [65c9aee2051ff7c47112b2aee0d928d9b6a8c2fe]
+GOLD: ['Unanswerable', 'https://github.com/Sairamvinay/Fake-News-Dataset\n\n', 'Unanswerable']
+Hybrid+CE: Unanswerable
+oracle: Unanswerable
+
+Q: what future work is described?  [d1a4529ea32aaab5ca3b9d9ae5c16f146c23af6b]
+GOLD: ['the hypothesis that needs be studied is whether LDA was just a clever way to model this information leak in the given data or not', 'Investigate the effectiveness of LDA to capture the subject of the essay.', 'investigate whether this is due to the expressiveness and modeling power of LDA or an artifact of the dataset used']
+Hybrid+CE: Further evaluation of feature groups, exploration of new classifiers
+oracle: Further analysis and validation
+
+===== GENERATION FAILURE (gold evidence in context, F1 < 0.3): 93 questions =====
+
+Q: Does LadaBERT ever outperform its knowledge destilation teacher in terms of accuracy on some problems?  [5ed02ae6c534cd49d405489990f0e4ba0330ff1b]
+GOLD: ['No', 'No', 'No']
+Hybrid+CE: Yes
+oracle: Unanswerable
+
+Q: How are the expert and crowd-sourced annotations compared to one another?  [27356a99290fcc01e3e5660af3405d2a6c6f6e7c]
+GOLD: ['by using them as features in classifying diagrams and\ntheir parts using various graph neural networks.', 'Expert annotators incorporate domain knowledge from multimodality theory while non-expert cannot but they are less time-consuming and use less resources.', 'results are not entirely comparable due to different node types, more reasonable to compare architectures']
+Hybrid+CE: Expert annotations provide better representations
+oracle: Through graph neural networks
+
+Q: What is the state-of-the-art?  [2e4688205c8e344cded7a053b6014cce04ef1bd5]
+GOLD: ['Peng and Dredze peng-dredze:2016:P16-2', 'Peng and Dredze peng-dredze:2016:P16-2', 'Peng and Dredze peng-dredze:2016:P16-2']
+Hybrid+CE: F-Score Driven Model II
+oracle: B-LSTM + MMNN model
+
+Q: What kind of evaluations do use to evaluate dialogue?  [108f99fcaf620fab53077812e8901870896acf36]
+GOLD: ['They use automatic evaluation using perplexity and BLEU scores with reference to the human-annotated responses and human evaluation on interestingness, engagingness, and humanness.', 'Unanswerable', 'perplexity (ppl.) and BLEU, which of the two dialogues is better in terms of engagingness, interestingness, and humanness', 'perplexity, BLEU, ACUTE-EVA']
+Hybrid+CE: both automatic and human evaluation
+oracle: both automatic and human evaluation
+
+Q: How does labeling scheme look like?  [6df57a21ca875e63fb39adece6a9ace5bb2b2cfa]
+GOLD: ['Based on operation and system concepts, the labels are abb, grp, syscon, opcon, seterm, event, org, art, cardinal, loc and mea.', "BIO Labelling Scheme\nabb: represents abbreviations such as TRL representing Technology Readiness Level.\n\ngrp: represents a group of people or an individual such as Electrical Engineers, Systems Engineers or a Project Manager.\n\nsyscon: represents any system concepts such as engineering unit, product, hardware, software, etc. They mostly represent physical concepts.\n\nopcon: represents operational concepts such as decision analysis process, technology maturity assessment, system requirements review, etc.\n\nseterm: represents generic terms that are frequently used in SE text and those that do not fall under syscon or opcon such as project, mission, key performance parameter, audit etc.\n\nevent: represents event-like information in SE text such as Pre-Phase A, Phase A, Phase B, etc.\n\norg: represents an organization such as `NASA', `aerospace industry', etc.\n\nart: represents names of artifacts or instruments such as `AS1300'\n\ncardinal: represents numerical values such as `1', `100', 'one' etc.\n\nloc: represents location-like entities such as component facilities or centralized facility.\n\nmea: represents measures, features, or behaviors such as cost, risk, or feasibility.", '1. abb\n2. grp\n3. syscon\n4. opcon\n5. seterm\n6. event\n7. org\n8. art\n9. cardinal\n10. loc\n11. mea']
+Hybrid+CE: BIO Labelling Scheme
+oracle: BIO Labelling Scheme
+
+Q: What is the architecture of the encoder?  [b6aa5665c981e3b582db4760759217e2979d5626]
+GOLD: ['pre-trained Xnlg with a 10-layer encoder', 'denoising auto-encoding (DAE) objective BIBREF24', '10 transformer layers, each layer containing 1024 hidden units, 8 attentions heads, and GELU activations.']
+Hybrid+CE: Transformer
+oracle: 10-layer
+
+Q: What human evaluation metrics do they look at?  [afeceee343360d3fe715f405dac7760d9a6754a7]
+GOLD: ['human preference', 'triple pairing task, hierarchical generation', 'Accuracy at pairing stories with the prompts used to generate them; accuracy of prompt ranking']
+Hybrid+CE: Unanswerable
+oracle: triple pairing task, comparison of hierarchical generation with no prompt
+
+Q: Are the stories in the dataset fictional stories?  [f2dba5bf75967407cce5d0a9c2618269225081f5]
+GOLD: ['No', 'No', 'Yes']
+Hybrid+CE: Unanswerable
+oracle: Unanswerable

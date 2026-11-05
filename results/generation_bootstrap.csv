@@ -1,0 +1,8 @@
+A,B,delta Answer-F1,95% CI,significant
+closed-book,Hybrid+CE,0.322,"[0.275, 0.374]",True
+BM25,Dense,0.07,"[0.029, 0.115]",True
+Dense,Hybrid,-0.027,"[-0.059, 0.003]",False
+Hybrid,Hybrid+CE,0.025,"[-0.008, 0.059]",False
+Dense,Hybrid+CE,-0.003,"[-0.037, 0.032]",False
+Hybrid+CE,oracle,0.15,"[0.109, 0.187]",True
+Dense,oracle,0.147,"[0.107, 0.186]",True

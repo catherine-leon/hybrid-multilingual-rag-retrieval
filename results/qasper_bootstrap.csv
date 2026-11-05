@@ -1,0 +1,8 @@
+A,B,delta ParaRecall@5,95% CI,significant
+paragraph / BM25,paragraph / Dense,0.131,"[0.086, 0.179]",True
+paragraph / Dense,paragraph / Hybrid,-0.033,"[-0.066, 0.002]",False
+paragraph / Hybrid,paragraph / Hybrid+CE,0.065,"[0.022, 0.105]",True
+paragraph / Dense,paragraph / Hybrid+CE,0.032,"[-0.008, 0.069]",False
+paragraph / BM25,paragraph+section / BM25,0.009,"[-0.011, 0.030]",False
+paragraph / Hybrid+CE,paragraph+section / Hybrid+CE,0.025,"[0.001, 0.051]",True
+paragraph+section / Hybrid+CE,fixed256 / Hybrid+CE,0.116,"[0.078, 0.156]",True
