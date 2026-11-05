@@ -1,61 +1,85 @@
-"""Chunking strategies for QASPER papers.
+"""Token-based chunking strategies for QASPER papers.
 
-Every chunk keeps the list of paragraph indices it covers ("para_ids"),
-so gold evidence (annotated at paragraph level) can be mapped to chunks
-whatever the strategy.
+Sizes are measured with the tokenizer of the dense retriever, so that no chunk
+is silently truncated by the retrieval models (E5 / bge-reranker: 512 tokens).
+
+Every chunk keeps the list of paragraph indices it covers ("para_ids"), so gold
+evidence (annotated at paragraph level) can be mapped to chunks whatever the
+strategy.
 """
 
 
-def make_chunk(paper_id, n, text, section, para_ids):
+def make_chunk(paper_id, n, text, section, para_ids, n_tokens):
     return {
         "chunk_id": f"{paper_id}::{n}",
         "paper_id": paper_id,
         "section": section,
         "text": text,
         "para_ids": sorted(set(para_ids)),
+        "n_tokens": n_tokens,
     }
 
 
-def paragraph_chunks(paper_id, paragraphs, add_section=False):
-    """Strategy A: one chunk = one native paragraph.
+def token_spans(tokenizer, text):
+    """Character spans (start, end) of the tokens of `text`, no special tokens."""
+    enc = tokenizer(text, add_special_tokens=False, return_offsets_mapping=True)
+    return [(s, e) for s, e in enc["offset_mapping"] if e > s]
 
-    add_section=True prepends the section name ("section-aware" variant),
-    e.g. "Experiments ::: Datasets. We evaluate on ..."
+
+def windows(n, size, overlap):
+    """Start/end indices of sliding windows over n items."""
+    assert 0 <= overlap < size
+    if n <= size:
+        return [(0, n)]
+    out, start = [], 0
+    while True:
+        end = min(start + size, n)
+        out.append((start, end))
+        if end == n:
+            return out
+        start += size - overlap
+
+
+def paragraph_chunks(paper_id, paragraphs, tokenizer, max_tokens=256, overlap=32, add_section=False):
+    """Paragraph-aware chunking.
+
+    A paragraph that fits in `max_tokens` is one chunk. A longer paragraph is
+    split INSIDE the paragraph into overlapping windows; all pieces keep the
+    same para_id. add_section=True prepends the section name, and its tokens
+    count towards the budget.
     """
-    chunks = []
-    for n, p in enumerate(paragraphs):
-        text = f"{p['section']}. {p['text']}" if add_section and p["section"] else p["text"]
-        chunks.append(make_chunk(paper_id, n, text, p["section"], [p["para_idx"]]))
+    chunks, n = [], 0
+    for p in paragraphs:
+        prefix = f"{p['section']}. " if add_section and p["section"] else ""
+        budget = max_tokens - (len(token_spans(tokenizer, prefix)) if prefix else 0)
+        spans = token_spans(tokenizer, p["text"])
+        for s, e in windows(len(spans), budget, overlap):
+            body = p["text"][spans[s][0]:spans[e - 1][1]]
+            chunks.append(make_chunk(paper_id, n, prefix + body, p["section"],
+                                     [p["para_idx"]], (e - s) + (max_tokens - budget)))
+            n += 1
     return chunks
 
 
-def fixed_size_chunks(paper_id, paragraphs, chunk_size=200, overlap=50):
-    """Strategy B: fixed windows of `chunk_size` words with `overlap`,
-    ignoring paragraph and section boundaries.
+def fixed_token_chunks(paper_id, paragraphs, tokenizer, size=256, overlap=64):
+    """Fixed windows of `size` tokens with `overlap`, ignoring paragraph and
+    section boundaries. Text is rebuilt from the original paragraphs, so a
+    window spanning two paragraphs joins their pieces with a space."""
+    toks = []  # (para position, char start, char end)
+    for i, p in enumerate(paragraphs):
+        toks += [(i, s, e) for s, e in token_spans(tokenizer, p["text"])]
 
-    Words are whitespace tokens (simple and model-independent);
-    200 words stay well below the 512-token limit of E5 / bge-reranker.
-    """
-    assert 0 <= overlap < chunk_size
-    words, word_para, word_section = [], [], []
-    for p in paragraphs:
-        for w in p["text"].split():
-            words.append(w)
-            word_para.append(p["para_idx"])
-            word_section.append(p["section"])
-
-    chunks, step, n = [], chunk_size - overlap, 0
-    for start in range(0, len(words), step):
-        end = min(start + chunk_size, len(words))
-        chunks.append(make_chunk(
-            paper_id, n,
-            " ".join(words[start:end]),
-            word_section[start],
-            word_para[start:end],
-        ))
-        n += 1
-        if end == len(words):
-            break
+    chunks = []
+    for n, (s, e) in enumerate(windows(len(toks), size, overlap)):
+        pieces, order = {}, []
+        for i, cs, ce in toks[s:e]:
+            if i not in pieces:
+                pieces[i] = [cs, ce]
+                order.append(i)
+            pieces[i][1] = ce
+        text = " ".join(paragraphs[i]["text"][pieces[i][0]:pieces[i][1]] for i in order)
+        chunks.append(make_chunk(paper_id, n, text, paragraphs[order[0]]["section"],
+                                 [paragraphs[i]["para_idx"] for i in order], e - s))
     return chunks
 
 
@@ -65,8 +89,9 @@ def gold_chunk_ids(chunks, gold_paragraphs):
     return [c["chunk_id"] for c in chunks if gold & set(c["para_ids"])]
 
 
-CHUNKERS = {
-    "paragraph": lambda pid, paras: paragraph_chunks(pid, paras, add_section=False),
-    "paragraph+section": lambda pid, paras: paragraph_chunks(pid, paras, add_section=True),
-    "fixed200": lambda pid, paras: fixed_size_chunks(pid, paras, 200, 50),
-}
+def make_chunkers(tokenizer, max_tokens=256):
+    return {
+        "paragraph": lambda pid, paras: paragraph_chunks(pid, paras, tokenizer, max_tokens),
+        "paragraph+section": lambda pid, paras: paragraph_chunks(pid, paras, tokenizer, max_tokens, add_section=True),
+        f"fixed{max_tokens}": lambda pid, paras: fixed_token_chunks(pid, paras, tokenizer, max_tokens, 64),
+    }

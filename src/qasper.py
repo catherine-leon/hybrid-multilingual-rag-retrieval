@@ -107,6 +107,9 @@ def extract_questions(papers):
                     "free_form_answer": a.get("free_form_answer", ""),
                     "yes_no": a.get("yes_no"),
                     "unanswerable": a.get("unanswerable", False),
+                    # this annotator's text evidence (figure/table evidence excluded), for Evidence-F1
+                    "evidence": [normalize(e) for e in a.get("evidence", [])
+                                 if not is_float_evidence(normalize(e))],
                 })
                 for ev in a.get("evidence", []):
                     stats["evidence_total"] += 1

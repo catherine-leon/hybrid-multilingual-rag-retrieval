@@ -84,16 +84,16 @@ def evaluate_qasper(search_fn, questions, gold_by_question, chunk_info, ks=(1, 3
     chunk_info: {chunk_id: chunk dict} — used for two chunking-fair metrics:
       ParaRecall@k — share of gold PARAGRAPHS covered by the top-k chunks
                      (comparable across chunking strategies);
-      Words@k      — how much text the top-k chunks contain (context cost:
-                     bigger chunks find evidence more easily but cost more).
+      Tokens@k     — size of the top-k chunks in retriever tokens (context
+                     cost: bigger chunks find evidence more easily but cost more).
 
-    Returns (metrics, rankings), rankings = {question_id: ranked chunk ids}.
+    Returns (metrics, rankings, per_question):
+      rankings     = {question_id: ranked chunk ids}
+      per_question = {metric name: list of per-question values, in `questions`
+                      order} — used for paired bootstrap.
     """
     max_k = max(ks)
-    recall = {k: [] for k in ks}
-    rr = {k: [] for k in ks}
-    para_recall = {k: [] for k in ks}
-    words = {k: [] for k in ks}
+    per_q = {f"{m}@{k}": [] for m in ("Recall", "MRR", "ParaRecall", "Tokens") for k in ks}
     rankings = {}
 
     for r in questions:
@@ -103,16 +103,25 @@ def evaluate_qasper(search_fn, questions, gold_by_question, chunk_info, ks=(1, 3
         rankings[r["question_id"]] = ranked
         for k in ks:
             top = ranked[:k]
-            recall[k].append(recall_at_k(top, gold))
-            rr[k].append(reciprocal_rank(top, gold))
             covered = set().union(*(chunk_info[c]["para_ids"] for c in top)) if top else set()
-            para_recall[k].append(len(covered & gold_paras) / len(gold_paras))
-            words[k].append(sum(len(chunk_info[c]["text"].split()) for c in top))
+            per_q[f"Recall@{k}"].append(recall_at_k(top, gold))
+            per_q[f"MRR@{k}"].append(reciprocal_rank(top, gold))
+            per_q[f"ParaRecall@{k}"].append(len(covered & gold_paras) / len(gold_paras))
+            per_q[f"Tokens@{k}"].append(sum(chunk_info[c]["n_tokens"] for c in top))
 
-    metrics = {}
-    for k in ks:
-        metrics[f"Recall@{k}"] = float(np.mean(recall[k]))
-        metrics[f"MRR@{k}"] = float(np.mean(rr[k]))
-        metrics[f"ParaRecall@{k}"] = float(np.mean(para_recall[k]))
-        metrics[f"Words@{k}"] = float(np.mean(words[k]))
-    return metrics, rankings
+    metrics = {name: float(np.mean(v)) for name, v in per_q.items()}
+    return metrics, rankings, per_q
+
+
+def paired_bootstrap(a, b, n_boot=1000, seed=0):
+    """Paired bootstrap over questions for mean(b) - mean(a).
+
+    Returns (difference, 95% CI low, 95% CI high). If the interval contains 0,
+    the difference is within noise for this sample size.
+    """
+    a, b = np.asarray(a, float), np.asarray(b, float)
+    rng = np.random.default_rng(seed)
+    idx = rng.integers(0, len(a), size=(n_boot, len(a)))
+    diffs = (b[idx] - a[idx]).mean(axis=1)
+    lo, hi = np.percentile(diffs, [2.5, 97.5])
+    return float(b.mean() - a.mean()), float(lo), float(hi)
